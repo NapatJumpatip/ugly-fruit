@@ -339,7 +339,7 @@ for file_idx, uploaded in enumerate(uploaded_files):
         if details:
             st.divider()
             df = pd.DataFrame(details)
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width='stretch')
 
             buf = io.BytesIO()
             Image.fromarray(annotated).save(buf, format="PNG")
