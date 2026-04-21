@@ -80,7 +80,11 @@ with st.sidebar:
         ["yolov8n.pt", "yolov8s.pt", "runs/detect/best.pt"],
     )
     fruit_class = st.selectbox("Fruit Class", ["orange", "apple", "banana"])
-    conf_thresh = st.slider("Confidence Threshold", 0.1, 0.9, 0.5, 0.05)
+    show_thresh = st.toggle("Advanced: Confidence Threshold", value=False)
+    if show_thresh:
+        conf_thresh = st.slider("Confidence Threshold", 0.1, 0.9, 0.5, 0.05)
+    else:
+        conf_thresh = 0.5
 
     st.divider()
     st.subheader("Step 2 — Classification")
@@ -335,7 +339,7 @@ for file_idx, uploaded in enumerate(uploaded_files):
         if details:
             st.divider()
             df = pd.DataFrame(details)
-            st.dataframe(df, use_container_width=True)
+            st.dataframe(df, width='stretch')
 
             buf = io.BytesIO()
             Image.fromarray(annotated).save(buf, format="PNG")
