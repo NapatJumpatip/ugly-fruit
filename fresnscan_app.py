@@ -68,6 +68,7 @@ def load_classifier(path):
         model = tf.keras.models.load_model(path)
         return model, True
     except Exception as e:
+        st.sidebar.error(f"Load failed: {e}")
         return None, False
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
