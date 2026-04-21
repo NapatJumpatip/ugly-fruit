@@ -65,11 +65,22 @@ def load_yolo(path):
 @st.cache_resource
 def load_classifier(path):
     try:
-        model = tf.keras.models.load_model(path)
+        model = tf.keras.models.load_model(
+            path,
+            compile=False
+        )
         return model, True
-    except Exception as e:
-        st.sidebar.error(f"Load failed: {e}")
-        return None, False
+    except Exception as e1:
+        try:
+            # fallback สำหรับ Keras version mismatch
+            from tensorflow.python.keras.saving import hdf5_format
+            import h5py
+            with h5py.File(path, 'r') as f:
+                model = hdf5_format.load_model_from_hdf5(f)
+            return model, True
+        except Exception as e2:
+            st.sidebar.error(f"Load failed: {e2}")
+            return None, False
 
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
