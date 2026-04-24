@@ -61,24 +61,32 @@ PADDING     = 8
 @st.cache_resource
 def load_yolo(path):
     return YOLO(path)
-
+    
 @st.cache_resource
 def load_classifier(path):
     import os
-    # ตรวจสอบว่าไฟล์มีอยู่จริงและขนาดสมเหตุสมผล
     if not os.path.exists(path):
         st.sidebar.error(f"❌ ไม่พบไฟล์: {path}")
         return None, False
     
     size_mb = os.path.getsize(path) / (1024 * 1024)
-    st.sidebar.info(f"📦 {path} = {size_mb:.1f} MB")  # แสดงขนาดจริง
+    st.sidebar.info(f"📦 {path} = {size_mb:.1f} MB")
     
     try:
-        model = tf.keras.models.load_model(path)
+        model = tf.keras.models.load_model(path, compile=False)
         return model, True
     except Exception as e:
-        st.sidebar.error(f"❌ Load error: {e}")  # แสดง error จริง
-        return None, False
+        # fallback: โหลดแบบ safe mode
+        try:
+            model = tf.keras.models.load_model(
+                path, 
+                compile=False,
+                custom_objects={"InputLayer": tf.keras.layers.InputLayer}
+            )
+            return model, True
+        except Exception as e2:
+            st.sidebar.error(f"❌ Load error: {e2}")
+            return None, False
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("⚙️ Settings")
