@@ -1,6 +1,6 @@
 streamlit
 ultralytics
-tensorflow==2.15.0
+tensorflow==2.19.0
 opencv-python-headless
 pillow
 pandas
