@@ -64,12 +64,21 @@ def load_yolo(path):
 
 @st.cache_resource
 def load_classifier(path):
+    import os
+    # ตรวจสอบว่าไฟล์มีอยู่จริงและขนาดสมเหตุสมผล
+    if not os.path.exists(path):
+        st.sidebar.error(f"❌ ไม่พบไฟล์: {path}")
+        return None, False
+    
+    size_mb = os.path.getsize(path) / (1024 * 1024)
+    st.sidebar.info(f"📦 {path} = {size_mb:.1f} MB")  # แสดงขนาดจริง
+    
     try:
         model = tf.keras.models.load_model(path)
         return model, True
     except Exception as e:
+        st.sidebar.error(f"❌ Load error: {e}")  # แสดง error จริง
         return None, False
-
 # ─── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
     st.header("⚙️ Settings")
